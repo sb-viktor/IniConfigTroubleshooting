@@ -3,8 +3,8 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
-	xmlns:editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:IniConfigTroubleshooting.ViewModels"
     Title="Ini Config Troubleshooting"
@@ -19,7 +19,56 @@
 	</Design.DataContext>
 
 	<DockPanel>
-		<Menu DockPanel.Dock="Top" />
+
+		<Menu Height="25" DockPanel.Dock="Top">
+			<MenuItem Header="_File">
+				<MenuItem
+                    Command="{Binding}"
+                    Header="_Open"
+                    InputGesture="Ctrl+O" />
+				<MenuItem
+                    Command="{Binding}"
+                    Header="_Save"
+                    InputGesture="Ctrl+S" />
+				<MenuItem
+                    Command="{Binding}"
+                    Header="_Save As"
+                    InputGesture="Ctrl+Shift+S" />
+				<Separator />
+				<MenuItem
+                    Command="{Binding}"
+                    Header="E_xit"
+                    InputGesture="Alt+F4" />
+			</MenuItem>
+			<MenuItem Header="_Edit">
+				<MenuItem
+                    Command="{Binding UndoMouseCommand}"
+                    CommandParameter="{Binding #Editor.TextArea}"
+                    Header="Undo"
+                    InputGesture="Ctrl+Z" />
+				<MenuItem
+                    Command="{Binding}"
+                    CommandParameter="{Binding #Editor.TextArea}"
+                    Header="Redo"
+                    InputGesture="Ctrl+Y" />
+				<Separator />
+				<MenuItem
+                    Command="{Binding CutMouseCommand}"
+                    CommandParameter="{Binding #Editor.TextArea}"
+                    Header="Cut"
+                    InputGesture="Ctrl+X" />
+				<MenuItem
+                    Command="{Binding CopyMouseCommand}"
+                    CommandParameter="{Binding #Editor.TextArea}"
+                    Header="Copy"
+                    InputGesture="Ctrl+C" />
+				<MenuItem
+                    Command="{Binding PasteMouseCommand}"
+                    CommandParameter="{Binding #Editor.TextArea}"
+                    Header="Paste"
+                    InputGesture="Ctrl+V" />
+			</MenuItem>
+		</Menu>
 
 		<StackPanel
             Name="StatusBar"
@@ -42,6 +91,7 @@
             ShowLineNumbers="True"
             Text="Hello AvaloniaEdit!"
             VerticalScrollBarVisibility="Visible">
+
 			<AvalonEdit:TextEditor.ContextFlyout>
 				<MenuFlyout>
 					<MenuItem
@@ -67,11 +117,15 @@
                         InputGesture="ctrl+A" />
 				</MenuFlyout>
 			</AvalonEdit:TextEditor.ContextFlyout>
-			<!--<AvalonEdit:TextEditor.Styles>
+
+			<!--
+			<AvalonEdit:TextEditor.Styles>
 				<Style Selector="editing|LineNumberMargin">
 					<Setter Property="MinWidthInDigits" Value="3" />
 				</Style>
-			</AvalonEdit:TextEditor.Styles>-->
+			</AvalonEdit:TextEditor.Styles>
+			-->
+
 		</AvalonEdit:TextEditor>
 
 	</DockPanel>
