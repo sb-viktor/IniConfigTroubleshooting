@@ -47,7 +47,7 @@
                     Header="Undo"
                     InputGesture="Ctrl+Z" />
 				<MenuItem
-                    Command="{Binding}"
+                    Command="{Binding RedoMouseCommand}"
                     CommandParameter="{Binding #Editor.TextArea}"
                     Header="Redo"
                     InputGesture="Ctrl+Y" />
@@ -67,6 +67,12 @@
                     CommandParameter="{Binding #Editor.TextArea}"
                     Header="Paste"
                     InputGesture="Ctrl+V" />
+				<Separator />
+				<MenuItem
+                    Command="{Binding SelectAllMouseCommand}"
+                    CommandParameter="{Binding #Editor.TextArea}"
+                    Header="Select All"
+                    InputGesture="ctrl+A" />
 			</MenuItem>
 		</Menu>
 
@@ -89,7 +95,7 @@
             FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
             HorizontalScrollBarVisibility="Auto"
             ShowLineNumbers="True"
-			Document="{Binding SourceDocument}"
+            Document="{Binding SourceDocument}"
             VerticalScrollBarVisibility="Visible">
 
 			<AvalonEdit:TextEditor.ContextFlyout>
