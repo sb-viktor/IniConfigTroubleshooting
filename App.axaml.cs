@@ -11,6 +11,7 @@ namespace IniConfigTroubleshooting;
 
 public partial class App : Application
 {
+    public new static App? Current => Application.Current as App;
     public ServiceProvider? Services { get; private set; }
 
     public override void Initialize()
