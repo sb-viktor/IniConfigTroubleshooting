@@ -1,16 +1,18 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using IniConfigTroubleshooting.ViewModels;
 using IniConfigTroubleshooting.Views;
+using Microsoft.Extensions.DependencyInjection;
+using IniConfigTroubleshooting.Services;
 
 namespace IniConfigTroubleshooting;
 
 public partial class App : Application
 {
+    public ServiceProvider? Services { get; private set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -27,9 +29,17 @@ public partial class App : Application
             {
                 DataContext = new MainWindowViewModel(),
             };
+            SetupServices(desktop);
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void SetupServices(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        Services = new ServiceCollection()
+            .AddSingleton<IFilesService>(x => new FilesService(desktop.MainWindow!))
+            .BuildServiceProvider();
     }
 
     private void DisableAvaloniaDataAnnotationValidation()
