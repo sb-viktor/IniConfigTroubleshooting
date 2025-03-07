@@ -23,7 +23,7 @@
 		<Menu Height="25" DockPanel.Dock="Top">
 			<MenuItem Header="_File">
 				<MenuItem
-                    Command="{Binding}"
+                    Command="{Binding OpenFileCommand}"
                     Header="_Open"
                     InputGesture="Ctrl+O" />
 				<MenuItem
@@ -89,7 +89,7 @@
             FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
             HorizontalScrollBarVisibility="Auto"
             ShowLineNumbers="True"
-            Text="Hello AvaloniaEdit!"
+			Document="{Binding SourceDocument}"
             VerticalScrollBarVisibility="Visible">
 
 			<AvalonEdit:TextEditor.ContextFlyout>
