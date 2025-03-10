@@ -5,6 +5,7 @@ using IniConfigTroubleshooting.Services;
 using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using AvaloniaEdit.Document;
+using System.IO;
 
 namespace IniConfigTroubleshooting.ViewModels;
 
@@ -50,9 +51,15 @@ public partial class MainWindowViewModel : ViewModelBase
         var file = await filesService.OpenFileAsync();
         if (file is null) return;
 
-        await using var readStream = await file.OpenReadAsync();
-        using var reader = new StreamReader(readStream);
-        SourceDocument = new TextDocument(await reader.ReadToEndAsync(token));
+        await using Stream readStream = await file.OpenReadAsync();
+        if (readStream is null) return;
+
+        using (readStream)
+        using (StreamReader reader = new(readStream))
+        {
+            string content = await reader.ReadToEndAsync(token);
+            SourceDocument = new TextDocument(content);
+        }
     }
     #endregion
 }
