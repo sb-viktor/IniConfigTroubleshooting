@@ -1,139 +1,67 @@
-<Window
-    x:Class="IniConfigTroubleshooting.Views.MainWindow"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:IniConfigTroubleshooting.ViewModels"
-    Title="Ini Config Troubleshooting"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    x:DataType="vm:MainWindowViewModel"
-    Icon="/Assets/avalonia-logo.ico"
-    mc:Ignorable="d">
-
-	<Design.DataContext>
-		<vm:MainWindowViewModel />
-	</Design.DataContext>
+<Window x:Class="IniConfigTroubleshooting.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:IniConfigTroubleshooting.ViewModels"
+        Title="Ini Config Troubleshooting"
+        d:DataContext="vm:MainWindowViewModel"
+        d:DesignHeight="450"
+        d:DesignWidth="800"
+        x:DataType="vm:MainWindowViewModel"
+        DataContext="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        mc:Ignorable="d">
 
 	<DockPanel>
-
 		<Menu Height="25" DockPanel.Dock="Top">
 			<MenuItem Header="_File">
-				<MenuItem
-                    Command="{Binding OpenFileCommand}"
-                    Header="_Open"
-                    InputGesture="Ctrl+O" />
-				<MenuItem
-                    Command="{Binding}"
-                    Header="_Save"
-                    InputGesture="Ctrl+S" />
-				<MenuItem
-                    Command="{Binding}"
-                    Header="_Save As"
-                    InputGesture="Ctrl+Shift+S" />
+				<MenuItem Command="{Binding OpenFileCommand}" Header="_Open" InputGesture="Ctrl+O" />
+				<MenuItem Command="{Binding}" Header="_Save" InputGesture="Ctrl+S" />
+				<MenuItem Command="{Binding}" Header="_Save As" InputGesture="Ctrl+Shift+S" />
 				<Separator />
-				<MenuItem
-                    Command="{Binding}"
-                    Header="E_xit"
-                    InputGesture="Alt+F4" />
+				<MenuItem Command="{Binding}" Header="E_xit" InputGesture="Alt+F4" />
 			</MenuItem>
 			<MenuItem Header="_Edit">
-				<MenuItem
-                    Command="{Binding UndoMouseCommand}"
-                    CommandParameter="{Binding #Editor.TextArea}"
-                    Header="Undo"
-                    InputGesture="Ctrl+Z" />
-				<MenuItem
-                    Command="{Binding RedoMouseCommand}"
-                    CommandParameter="{Binding #Editor.TextArea}"
-                    Header="Redo"
-                    InputGesture="Ctrl+Y" />
+				<MenuItem Command="{Binding UndoMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Undo" InputGesture="Ctrl+Z" />
+				<MenuItem Command="{Binding RedoMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Redo" InputGesture="Ctrl+Y" />
 				<Separator />
-				<MenuItem
-                    Command="{Binding CutMouseCommand}"
-                    CommandParameter="{Binding #Editor.TextArea}"
-                    Header="Cut"
-                    InputGesture="Ctrl+X" />
-				<MenuItem
-                    Command="{Binding CopyMouseCommand}"
-                    CommandParameter="{Binding #Editor.TextArea}"
-                    Header="Copy"
-                    InputGesture="Ctrl+C" />
-				<MenuItem
-                    Command="{Binding PasteMouseCommand}"
-                    CommandParameter="{Binding #Editor.TextArea}"
-                    Header="Paste"
-                    InputGesture="Ctrl+V" />
+				<MenuItem Command="{Binding CutMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Cut" InputGesture="Ctrl+X" />
+				<MenuItem Command="{Binding CopyMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Copy" InputGesture="Ctrl+C" />
+				<MenuItem Command="{Binding PasteMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Paste" InputGesture="Ctrl+V" />
 				<Separator />
-				<MenuItem
-                    Command="{Binding SelectAllMouseCommand}"
-                    CommandParameter="{Binding #Editor.TextArea}"
-                    Header="Select All"
-                    InputGesture="ctrl+A" />
+				<MenuItem Command="{Binding SelectAllMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Select All" InputGesture="Ctrl+A" />
 			</MenuItem>
 		</Menu>
 
-		<StackPanel
-            Name="StatusBar"
-            Height="25"
-            Background="Fuchsia"
-            DockPanel.Dock="Bottom"
-            Orientation="Horizontal">
-			<TextBlock
-                Name="StatusText"
-                Margin="5,0,0,0"
-                VerticalAlignment="Center"
-                FontSize="12"
-                Text="Ready" />
+		<StackPanel Name="StatusBar"
+                    Height="25"
+                    Background="Fuchsia"
+                    DockPanel.Dock="Bottom"
+                    Orientation="Horizontal">
+			<TextBlock Name="StatusText"
+                       Margin="5,0,0,0"
+                       VerticalAlignment="Center"
+                       FontSize="12"
+                       Text="Ready" />
 		</StackPanel>
 
-		<AvalonEdit:TextEditor
-            Name="Editor"
-            FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-            HorizontalScrollBarVisibility="Auto"
-            ShowLineNumbers="True"
-            Document="{Binding SourceDocument}"
-            VerticalScrollBarVisibility="Visible">
-
+		<AvalonEdit:TextEditor Name="Editor"
+                               Document="{Binding SourceDocument}"
+                               FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
+                               HorizontalScrollBarVisibility="Auto"
+                               ShowLineNumbers="True"
+                               VerticalScrollBarVisibility="Visible">
 			<AvalonEdit:TextEditor.ContextFlyout>
 				<MenuFlyout>
-					<MenuItem
-                        Command="{Binding CopyMouseCommand}"
-                        CommandParameter="{Binding #Editor.TextArea}"
-                        Header="Copy"
-                        InputGesture="ctrl+C" />
-					<MenuItem
-                        Command="{Binding CutMouseCommand}"
-                        CommandParameter="{Binding #Editor.TextArea}"
-                        Header="Cut"
-                        InputGesture="ctrl+X" />
-					<MenuItem
-                        Command="{Binding PasteMouseCommand}"
-                        CommandParameter="{Binding #Editor.TextArea}"
-                        Header="Paste"
-                        InputGesture="ctrl+V" />
-					<MenuItem Header="-" />
-					<MenuItem
-                        Command="{Binding SelectAllMouseCommand}"
-                        CommandParameter="{Binding #Editor.TextArea}"
-                        Header="Select All"
-                        InputGesture="ctrl+A" />
+					<MenuItem Command="{Binding CopyMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Copy" InputGesture="Ctrl+C" />
+					<MenuItem Command="{Binding CutMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Cut" InputGesture="Ctrl+X" />
+					<MenuItem Command="{Binding PasteMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Paste" InputGesture="Ctrl+V" />
+					<Separator />
+					<MenuItem Command="{Binding SelectAllMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Select All" InputGesture="Ctrl+A" />
 				</MenuFlyout>
 			</AvalonEdit:TextEditor.ContextFlyout>
-
-			<!--
-			<AvalonEdit:TextEditor.Styles>
-				<Style Selector="editing|LineNumberMargin">
-					<Setter Property="MinWidthInDigits" Value="3" />
-				</Style>
-			</AvalonEdit:TextEditor.Styles>
-			-->
-
 		</AvalonEdit:TextEditor>
-
 	</DockPanel>
-
 </Window>
