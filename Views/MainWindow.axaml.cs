@@ -11,15 +11,22 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        TextEditor? TextEditor = this.FindControl<TextEditor>("Editor");
+        SetupTextMate();
+    }
 
-        var RegistryOptions = new RegistryOptions(ThemeName.Light);
+    private void SetupTextMate()
+    {
+        //First of all you need to have a reference for your TextEditor for it to be used inside AvaloniaEdit.TextMate project.
+        var _textEditor = this.FindControl<TextEditor>("Editor");
 
-        var TextMateInstallation = TextEditor.InstallTextMate(RegistryOptions);
+        //Here we initialize RegistryOptions with the theme we want to use.
+        var _registryOptions = new RegistryOptions(ThemeName.Light);
 
-        Language IniFileLanguage = RegistryOptions.GetLanguageByExtension(".ini");
+        //Initial setup of TextMate.
+        var _textMateInstallation = _textEditor.InstallTextMate(_registryOptions);
 
-        TextMateInstallation.SetGrammar(RegistryOptions.GetScopeByLanguageId(IniFileLanguage.Id));
-
+        //Here we are getting the language by the extension and right after that we are initializing grammar with this language.
+        //And that's all, you are ready to use AvaloniaEdit with syntax highlighting!
+        _textMateInstallation.SetGrammar(_registryOptions.GetScopeByExtension(".ini"));
     }
 }
