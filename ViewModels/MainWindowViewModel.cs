@@ -12,7 +12,7 @@ namespace IniConfigTroubleshooting.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     #region Fields
-    [ObservableProperty] private TextDocument? _sourceDocument;
+    [ObservableProperty] private TextDocument? _sourceDocument = new("Please, load file :)");
     #endregion
 
     #region Commands
