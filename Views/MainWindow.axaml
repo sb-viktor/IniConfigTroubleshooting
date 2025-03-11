@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:IniConfigTroubleshooting.ViewModels"
-        Title="Ini Config Troubleshooting"
+        Title="{Binding Title}"
         d:DataContext="vm:MainWindowViewModel"
         d:DesignHeight="450"
         d:DesignWidth="800"
@@ -65,7 +65,7 @@
 				</AvalonEdit:TextEditor.ContextFlyout>
 			</AvalonEdit:TextEditor>
 			<GridSplitter Grid.Row="1" Background="LightGray" ResizeDirection="Rows" />
-			<TabControl Grid.Row="2">
+			<TabControl Grid.Row="2" TabStripPlacement="Bottom">
 				<TabItem Header="Errors">
 					<StackPanel />
 				</TabItem>

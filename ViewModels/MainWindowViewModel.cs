@@ -12,7 +12,9 @@ namespace IniConfigTroubleshooting.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     #region Fields
-    [ObservableProperty] private TextDocument? _sourceDocument = new("Please, load file :)");
+    [ObservableProperty] private TextDocument _sourceDocument = new("Please, load file :)");
+
+    [ObservableProperty] private string _title = "Ini Config Troubleshooting";
     #endregion
 
     #region Commands
@@ -60,6 +62,8 @@ public partial class MainWindowViewModel : ViewModelBase
             string content = await reader.ReadToEndAsync(token);
             SourceDocument = new TextDocument(content);
         }
+
+        Title = file.Name;
     }
     #endregion
 }
