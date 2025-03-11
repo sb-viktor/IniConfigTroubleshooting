@@ -47,21 +47,30 @@
                        Text="Ready" />
 		</StackPanel>
 
-		<AvalonEdit:TextEditor Name="Editor"
-                               Document="{Binding SourceDocument}"
-                               FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-                               HorizontalScrollBarVisibility="Auto"
-                               ShowLineNumbers="True"
-                               VerticalScrollBarVisibility="Visible">
-			<AvalonEdit:TextEditor.ContextFlyout>
-				<MenuFlyout>
-					<MenuItem Command="{Binding CopyMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Copy" InputGesture="Ctrl+C" />
-					<MenuItem Command="{Binding CutMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Cut" InputGesture="Ctrl+X" />
-					<MenuItem Command="{Binding PasteMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Paste" InputGesture="Ctrl+V" />
-					<Separator />
-					<MenuItem Command="{Binding SelectAllMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Select All" InputGesture="Ctrl+A" />
-				</MenuFlyout>
-			</AvalonEdit:TextEditor.ContextFlyout>
-		</AvalonEdit:TextEditor>
+		<Grid RowDefinitions="*, 4, *">
+			<AvalonEdit:TextEditor Name="Editor"
+                                   Document="{Binding SourceDocument}"
+                                   FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
+                                   HorizontalScrollBarVisibility="Auto"
+                                   ShowLineNumbers="True"
+                                   VerticalScrollBarVisibility="Visible">
+				<AvalonEdit:TextEditor.ContextFlyout>
+					<MenuFlyout>
+						<MenuItem Command="{Binding CopyMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Copy" InputGesture="Ctrl+C" />
+						<MenuItem Command="{Binding CutMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Cut" InputGesture="Ctrl+X" />
+						<MenuItem Command="{Binding PasteMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Paste" InputGesture="Ctrl+V" />
+						<Separator />
+						<MenuItem Command="{Binding SelectAllMouseCommand}" CommandParameter="{Binding #Editor.TextArea}" Header="Select All" InputGesture="Ctrl+A" />
+					</MenuFlyout>
+				</AvalonEdit:TextEditor.ContextFlyout>
+			</AvalonEdit:TextEditor>
+			<GridSplitter Grid.Row="1" Background="LightGray" ResizeDirection="Rows" />
+			<TabControl Grid.Row="2">
+				<TabItem Header="Errors">
+					<StackPanel />
+				</TabItem>
+			</TabControl>
+		</Grid>
+
 	</DockPanel>
 </Window>
