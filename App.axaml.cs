@@ -2,10 +2,10 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using IniConfigTroubleshooting.Services;
 using IniConfigTroubleshooting.ViewModels;
 using IniConfigTroubleshooting.Views;
 using Microsoft.Extensions.DependencyInjection;
-using IniConfigTroubleshooting.Services;
 
 namespace IniConfigTroubleshooting;
 

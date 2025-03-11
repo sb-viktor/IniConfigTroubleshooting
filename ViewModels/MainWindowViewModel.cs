@@ -1,11 +1,10 @@
-﻿using AvaloniaEdit.Editing;
-using AvaloniaEdit;
+﻿using AvaloniaEdit;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IniConfigTroubleshooting.Services;
 using Microsoft.Extensions.DependencyInjection;
-using CommunityToolkit.Mvvm.ComponentModel;
-using AvaloniaEdit.Document;
-using System.IO;
 
 namespace IniConfigTroubleshooting.ViewModels;
 
