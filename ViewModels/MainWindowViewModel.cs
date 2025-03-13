@@ -23,25 +23,25 @@ public partial class MainWindowViewModel : ViewModelBase
         => ApplicationCommands.Copy.Execute(null, textArea);
 
     [RelayCommand]
-    private void CutMouseCommand(TextArea textArea)
+    private void CutMouse(TextArea textArea)
         => ApplicationCommands.Cut.Execute(null, textArea);
 
     [RelayCommand]
-    private void PasteMouseCommand(TextArea textArea)
+    private void PasteMouse(TextArea textArea)
         => ApplicationCommands.Paste.Execute(null, textArea);
 
     [RelayCommand]
-    private void SelectAllMouseCommand(TextArea textArea)
+    private void SelectAllMouse(TextArea textArea)
         => ApplicationCommands.SelectAll.Execute(null, textArea);
 
     // Undo Status is not given back to disable its item in ContextFlyout; therefore it's not being used yet.
     [RelayCommand]
-    private void UndoMouseCommand(TextArea textArea)
+    private void UndoMouse(TextArea textArea)
         => ApplicationCommands.Undo.Execute(null, textArea);
 
     // Redo Status is not given back to disable its item in ContextFlyout; therefore it's not being used yet.
     [RelayCommand]
-    private void RedoMouseCommand(TextArea textArea)
+    private void RedoMouse(TextArea textArea)
         => ApplicationCommands.Redo.Execute(null, textArea);
 
     [RelayCommand]
