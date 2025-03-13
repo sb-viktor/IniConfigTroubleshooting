@@ -4,6 +4,7 @@ using AvaloniaEdit.Editing;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IniConfigTroubleshooting.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IniConfigTroubleshooting.ViewModels;
@@ -63,6 +64,12 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         Title = file.Name;
+
+        // Build a configuration object from INI file
+        IConfiguration config = new ConfigurationBuilder()
+            .AddIniFile(file.Path.LocalPath)
+            .Build();
+
     }
     #endregion
 }
