@@ -32,6 +32,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="9.0.3" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
+		<PackageReference Include="Semi.Avalonia" Version="11.2.1.6" />
 		<PackageReference Include="TextMateSharp.Grammars" Version="1.0.66" />
 	</ItemGroup>
 </Project>
