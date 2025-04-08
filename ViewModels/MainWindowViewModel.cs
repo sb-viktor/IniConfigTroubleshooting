@@ -56,12 +56,9 @@ public partial class MainWindowViewModel : ViewModelBase
         await using Stream readStream = await file.OpenReadAsync();
         if (readStream is null) return;
 
-        using (readStream)
-        using (StreamReader reader = new(readStream))
-        {
-            string content = await reader.ReadToEndAsync(token);
-            SourceDocument = new TextDocument(content);
-        }
+        StreamReader reader = new(readStream);
+        string content = await reader.ReadToEndAsync(token);
+        SourceDocument = new TextDocument(content);
 
         Title = file.Name;
 
