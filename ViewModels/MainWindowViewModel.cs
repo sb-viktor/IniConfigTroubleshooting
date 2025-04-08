@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using IniConfigTroubleshooting.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text;
 
 namespace IniConfigTroubleshooting.ViewModels;
 
@@ -53,23 +54,33 @@ public partial class MainWindowViewModel : ViewModelBase
         var file = await filesService.OpenFileAsync();
         if (file is null) return;
 
-        await using Stream readStream = await file.OpenReadAsync();
-        if (readStream is null) return;
-
-        using (readStream)
-        using (StreamReader reader = new(readStream))
-        {
-            string content = await reader.ReadToEndAsync(token);
-            SourceDocument = new TextDocument(content);
-        }
-
         Title = file.Name;
 
-        // Build a configuration object from INI file
-        IConfiguration config = new ConfigurationBuilder()
-            .AddIniFile(file.Path.LocalPath)
-            .Build();
+        // Transform file encoding from ANSI to UTF-8  
+        string tempFilePath = TransformFileEncoding(file.Path.LocalPath);
 
+        // Fix: Use FileStream to open the file for reading  
+        await using FileStream readStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
+        if (readStream is null) return;
+
+        StreamReader reader = new(readStream);
+        string content = await reader.ReadToEndAsync(token);
+        SourceDocument = new TextDocument(content);
+
+        // Build a configuration object from INI file  
+        IConfiguration config = new ConfigurationBuilder()
+            .AddIniFile(tempFilePath)
+            .Build();
     }
     #endregion
+
+    private string TransformFileEncoding(string file)
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        string fileContent = File.ReadAllText(file, Encoding.GetEncoding(1252));
+        string tempFilePath = Path.GetTempFileName();
+        File.WriteAllText(tempFilePath, fileContent, Encoding.UTF8);
+        return tempFilePath;
+    }
+
 }
