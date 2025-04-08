@@ -5,7 +5,7 @@ The repository is a helper for solving problems before importing `ini` files. It
 
 The functionality I plan to add:
 
-- [ ] Detect encoding, and display text without artifacts
+- [x] Detect encoding, and display text without artifacts
 - [ ] Support for different themes ( dark&light )
 - [ ] Non-GUI work
 - [ ] Error highlighting and possibility of error correction
