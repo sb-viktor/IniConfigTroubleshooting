@@ -11,14 +11,7 @@
 	</Application.DataTemplates>
 
 	<Application.Styles>
-		<semi:SemiTheme Locale="en-US" />
-
-		<StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+		<semi:SemiTheme />
+		<semi:AvaloniaEditSemiTheme />
 	</Application.Styles>
-
-	<!--  Added to avoid https://github.com/AvaloniaUI/AvaloniaEdit/issues/471  -->
-	<Application.Resources>
-		<x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
-		<FontFamily x:Key="ContentControlThemeFontFamily">Microsoft YaHei</FontFamily>
-	</Application.Resources>
 </Application>
