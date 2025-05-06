@@ -54,23 +54,37 @@ public partial class MainWindowViewModel : ViewModelBase
         var file = await filesService.OpenFileAsync();
         if (file is null) return;
 
+        await ProcessFile(file, token);
+    }
+
+    private async Task ProcessFile(Avalonia.Platform.Storage.IStorageFile file, CancellationToken token)
+    {
         Title = file.Name;
 
         // Transform file encoding from ANSI to UTF-8  
         string tempFilePath = TransformFileEncoding(file.Path.LocalPath);
 
-        // Fix: Use FileStream to open the file for reading  
-        await using FileStream readStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
-        if (readStream is null) return;
+        try
+        {
+            // Use FileStream to open the file for reading  
+            await using FileStream readStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
+            StreamReader reader = new(readStream);
+            string content = await reader.ReadToEndAsync(token);
+            SourceDocument = new TextDocument(content);
 
-        StreamReader reader = new(readStream);
-        string content = await reader.ReadToEndAsync(token);
-        SourceDocument = new TextDocument(content);
-
-        // Build a configuration object from INI file  
-        IConfiguration config = new ConfigurationBuilder()
-            .AddIniFile(tempFilePath)
-            .Build();
+            // Build a configuration object from INI file  
+            IConfiguration config = new ConfigurationBuilder()
+                .AddIniFile(tempFilePath)
+                .Build();
+        }
+        finally
+        {
+            // Delete the temp file after loading
+            if (File.Exists(tempFilePath))
+            {
+                try { File.Delete(tempFilePath); } catch { /* ignore errors */ }
+            }
+        }
     }
     #endregion
 
