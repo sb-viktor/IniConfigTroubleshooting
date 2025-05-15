@@ -82,7 +82,16 @@ public partial class MainWindowViewModel : ViewModelBase
             // Delete the temp file after loading
             if (File.Exists(tempFilePath))
             {
-                try { File.Delete(tempFilePath); } catch { /* ignore errors */ }
+                try
+                {
+                    File.Delete(tempFilePath);
+                }
+                catch
+                {
+                    // Handle the exception if needed
+                    // For example, log the error or show a message to the user
+                    throw new IOException($"Failed to delete temporary file: {tempFilePath}");
+                }
             }
         }
     }
