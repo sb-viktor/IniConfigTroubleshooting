@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
@@ -11,7 +11,7 @@ namespace IniConfigTroubleshooting;
 
 public partial class App : Application
 {
-    public new static App? Current => Application.Current as App;
+    public static new App? Current => Application.Current as App;
     public ServiceProvider? Services { get; private set; }
 
     public override void Initialize()
@@ -52,7 +52,7 @@ public partial class App : Application
         // remove each entry found
         foreach (var plugin in dataValidationPluginsToRemove)
         {
-            BindingPlugins.DataValidators.Remove(plugin);
+            _ = BindingPlugins.DataValidators.Remove(plugin);
         }
     }
 }

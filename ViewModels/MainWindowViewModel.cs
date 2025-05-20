@@ -1,4 +1,5 @@
-﻿using AvaloniaEdit;
+﻿using System.Text;
+using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -6,7 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 using IniConfigTroubleshooting.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text;
 
 namespace IniConfigTroubleshooting.ViewModels;
 
@@ -52,7 +52,10 @@ public partial class MainWindowViewModel : ViewModelBase
             ?? throw new NullReferenceException("Missing File Service instance.");
 
         var file = await filesService.OpenFileAsync();
-        if (file is null) return;
+        if (file is null)
+        {
+            return;
+        }
 
         await ProcessFile(file, token);
     }
@@ -62,14 +65,14 @@ public partial class MainWindowViewModel : ViewModelBase
         Title = file.Name;
 
         // Transform file encoding from ANSI to UTF-8  
-        string tempFilePath = TransformFileEncoding(file.Path.LocalPath);
+        var tempFilePath = TransformFileEncoding(file.Path.LocalPath);
 
         try
         {
             // Use FileStream to open the file for reading  
-            await using FileStream readStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
+            await using var readStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
             StreamReader reader = new(readStream);
-            string content = await reader.ReadToEndAsync(token);
+            var content = await reader.ReadToEndAsync(token);
             SourceDocument = new TextDocument(content);
 
             // Build a configuration object from INI file  
@@ -100,10 +103,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private string TransformFileEncoding(string file)
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-        string fileContent = File.ReadAllText(file, Encoding.GetEncoding(1252));
-        string tempFilePath = Path.GetTempFileName();
+        var fileContent = File.ReadAllText(file, Encoding.GetEncoding(1252));
+        var tempFilePath = Path.GetTempFileName();
         File.WriteAllText(tempFilePath, fileContent, Encoding.UTF8);
         return tempFilePath;
     }
-
 }
