@@ -1,8 +1,6 @@
 ﻿using Avalonia.Controls;
 using AvaloniaEdit;
-using AvaloniaEdit.TextMate;
 using IniConfigTroubleshooting.ViewModels;
-using TextMateSharp.Grammars;
 
 namespace IniConfigTroubleshooting.Views;
 

@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using System.IO;
 using AvaloniaEdit;
 using AvaloniaEdit.Editing;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IniConfigTroubleshooting.Services;
