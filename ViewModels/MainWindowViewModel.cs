@@ -9,6 +9,8 @@ using AvaloniaEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
+using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace IniConfigTroubleshooting.ViewModels;
 
@@ -20,43 +22,54 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private TextDocument _sourceDocument = new("Please, load file :)");
 
-    private TextEditor? _editor;
+    [ObservableProperty]
+    private TextEditor? _editor = new();
+
     private RedSquiggleRenderer? _squiggleRenderer;
     private RegistryOptions? _registryOptions;
     private string? _iniScopeName;
 
-    public void AttachEditor(TextEditor editor)
+    private int _startLine = 0;
+    private int _endLine = 0;
+
+    public MainWindowViewModel()
     {
-        _editor = editor;
-        _editor.Document = SourceDocument;
-        _editor.TextChanged += OnEditorTextChanged;
+        Editor = new TextEditor
+        {
+            Document = SourceDocument,
+            FontFamily = new Avalonia.Media.FontFamily("Cascadia Code,Consolas,Menlo,Monospace"),
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            ShowLineNumbers = true,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible
+        };
+        Editor.TextChanged += OnEditorTextChanged;
         InitTextMate();
-        UpdateSquiggle();
+        UpdateSquiggle(_startLine, _endLine);
     }
 
     private void InitTextMate()
     {
         _registryOptions = new RegistryOptions(ThemeName.Light);
         _iniScopeName = _registryOptions.GetScopeByExtension(".ini");
-        if (_editor is null || _registryOptions is null || _iniScopeName is null)
+        if (Editor is null || _registryOptions is null || _iniScopeName is null)
             return;
-        _editor.InstallTextMate(_registryOptions)
+        Editor.InstallTextMate(_registryOptions)
               .SetGrammar(_iniScopeName);
     }
 
     private void OnEditorTextChanged(object? sender, EventArgs e)
     {
-        if (_editor?.Document is not null)
-            SourceDocument = _editor.Document;
-        UpdateSquiggle();
+        if (Editor?.Document is not null)
+            SourceDocument = Editor.Document;
+        UpdateSquiggle(_startLine, _endLine);
     }
 
-    private void UpdateSquiggle()
+    private void UpdateSquiggle(int startLine = 0, int endLine = 0)
     {
-        if (_editor is null) return;
-        _squiggleRenderer?.Detach(_editor);
-        _squiggleRenderer = new RedSquiggleRenderer(_editor.Document);
-        _squiggleRenderer.Attach(_editor);
+        if (Editor is null) return;
+        _squiggleRenderer?.Detach(Editor);
+        _squiggleRenderer = new RedSquiggleRenderer(Editor.Document, startLine, endLine);
+        _squiggleRenderer.Attach(Editor);
     }
 
     [RelayCommand]
@@ -74,8 +87,10 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var content = await File.ReadAllTextAsync(tempFilePath, Encoding.UTF8);
             SourceDocument = new TextDocument(content);
-            if (_editor is null) return;
-            _editor.Document = SourceDocument;
+            if (Editor is not null)
+                Editor.Document = SourceDocument;
+
+            TryBuildCondiguration(tempFilePath);
         }
         finally
         {
@@ -83,6 +98,26 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 try { File.Delete(tempFilePath); } catch { }
             }
+        }
+    }
+
+    private void TryBuildCondiguration(string filePath)
+    {
+        try
+        {
+            IConfiguration config = new ConfigurationBuilder()
+                .AddIniFile(filePath)
+                .Build();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error loading INI file: {ex.InnerException?.Message}");
+            Debug.WriteLine($"Document line count: {SourceDocument.LineCount}");
+
+
+            _startLine = 157;
+            _endLine = 157;
+            UpdateSquiggle(_startLine, _endLine);
         }
     }
 

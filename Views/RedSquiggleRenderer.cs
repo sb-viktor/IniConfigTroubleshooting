@@ -7,24 +7,33 @@ namespace IniConfigTroubleshooting.Views;
 
 public class RedSquiggleRenderer : IBackgroundRenderer
 {
-    private readonly int _length;
     private readonly TextDocument _doc;
-    public RedSquiggleRenderer(TextDocument doc)
+    private int _startLine;
+    private int _endLine;
+    public RedSquiggleRenderer(TextDocument doc, int startLine = 0, int endLine = 0)
     {
         _doc = doc;
-        _length = doc.TextLength;
+        SetLines(startLine, endLine);
+    }
+    public void SetLines(int startLine, int endLine)
+    {
+        _startLine = startLine;
+        _endLine = endLine;
     }
     public KnownLayer Layer => KnownLayer.Selection;
     public void Draw(TextView textView, DrawingContext drawingContext)
     {
-        if (_length == 0)
-        {
+        if (_doc.LineCount == 0 || _startLine > _endLine)
             return;
-        }
-
-        foreach (var rect in BackgroundGeometryBuilder.GetRectsForSegment(textView, new TextSegment { StartOffset = 0, Length = _length }))
+        int start = Math.Max(1, _startLine);
+        int end = Math.Min(_doc.LineCount, _endLine);
+        for (int line = start; line <= end; line++)
         {
-            DrawSquigglyUnderline(drawingContext, rect, Colors.Red);
+            var docLine = _doc.GetLineByNumber(line);
+            foreach (var rect in BackgroundGeometryBuilder.GetRectsForSegment(textView, new TextSegment { StartOffset = docLine.Offset, Length = docLine.Length }))
+            {
+                DrawSquigglyUnderline(drawingContext, rect, Colors.Red);
+            }
         }
     }
     private static void DrawSquigglyUnderline(DrawingContext dc, Avalonia.Rect rect, Color color)
