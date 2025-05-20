@@ -21,9 +21,9 @@
 			<MenuItem Header="_File">
 
 				<MenuItem
-					Command="{Binding OpenFileCommand}"
 					Header="_Open"
-					InputGesture="Ctrl+O" />
+					InputGesture="Ctrl+O"
+					Command="{Binding OpenFileCommand}" />
 
 				<MenuItem Header="_Save" InputGesture="Ctrl+S" />
 
@@ -97,36 +97,29 @@
 
 			<AvalonEdit:TextEditor
 				Name="Editor"
-				Document="{Binding SourceDocument}"
 				FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
 				HorizontalScrollBarVisibility="Auto"
 				ShowLineNumbers="True"
-				VerticalScrollBarVisibility="Visible">
-
+				VerticalScrollBarVisibility="Visible"
+				Document="{Binding SourceDocument, Mode=TwoWay}">
 				<AvalonEdit:TextEditor.ContextFlyout>
-
 					<MenuFlyout>
-
 						<MenuItem
 							Command="{Binding CopyMouseCommand}"
 							CommandParameter="{Binding #Editor.TextArea}"
 							Header="Copy"
 							InputGesture="Ctrl+C" />
-
 						<MenuItem
 							Command="{Binding CutMouseCommand}"
 							CommandParameter="{Binding #Editor.TextArea}"
 							Header="Cut"
 							InputGesture="Ctrl+X" />
-
 						<MenuItem
 							Command="{Binding PasteMouseCommand}"
 							CommandParameter="{Binding #Editor.TextArea}"
 							Header="Paste"
 							InputGesture="Ctrl+V" />
-
 						<Separator />
-
 						<MenuItem
 							Command="{Binding SelectAllMouseCommand}"
 							CommandParameter="{Binding #Editor.TextArea}"

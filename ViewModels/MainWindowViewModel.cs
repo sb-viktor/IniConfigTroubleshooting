@@ -1,104 +1,92 @@
 ﻿using System.Text;
+using System.IO;
 using AvaloniaEdit;
-using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IniConfigTroubleshooting.Services;
-using Microsoft.Extensions.Configuration;
+using IniConfigTroubleshooting.Views;
+using AvaloniaEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
+using AvaloniaEdit.TextMate;
+using TextMateSharp.Grammars;
 
 namespace IniConfigTroubleshooting.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    #region Fields
-    [ObservableProperty] private TextDocument _sourceDocument = new("Please, load file :)");
+    [ObservableProperty]
+    private string _title = "Ini Config Troubleshooting";
 
-    [ObservableProperty] private string _title = "Ini Config Troubleshooting";
-    #endregion
+    [ObservableProperty]
+    private TextDocument _sourceDocument = new("Please, load file :)");
 
-    #region Commands
+    private TextEditor? _editor;
+    private RedSquiggleRenderer? _squiggleRenderer;
+    private RegistryOptions? _registryOptions;
+    private string? _iniScopeName;
+
+    public void AttachEditor(TextEditor editor)
+    {
+        _editor = editor;
+        _editor.Document = SourceDocument;
+        _editor.TextChanged += OnEditorTextChanged;
+        InitTextMate();
+        UpdateSquiggle();
+    }
+
+    private void InitTextMate()
+    {
+        _registryOptions = new RegistryOptions(ThemeName.Light);
+        _iniScopeName = _registryOptions.GetScopeByExtension(".ini");
+        if (_editor is null || _registryOptions is null || _iniScopeName is null)
+            return;
+        _editor.InstallTextMate(_registryOptions)
+              .SetGrammar(_iniScopeName);
+    }
+
+    private void OnEditorTextChanged(object? sender, EventArgs e)
+    {
+        if (_editor?.Document is not null)
+            SourceDocument = _editor.Document;
+        UpdateSquiggle();
+    }
+
+    private void UpdateSquiggle()
+    {
+        if (_editor is null) return;
+        _squiggleRenderer?.Detach(_editor);
+        _squiggleRenderer = new RedSquiggleRenderer(_editor.Document);
+        _squiggleRenderer.Attach(_editor);
+    }
+
     [RelayCommand]
-    private void CopyMouse(TextArea textArea)
-        => ApplicationCommands.Copy.Execute(null, textArea);
-
-    [RelayCommand]
-    private void CutMouse(TextArea textArea)
-        => ApplicationCommands.Cut.Execute(null, textArea);
-
-    [RelayCommand]
-    private void PasteMouse(TextArea textArea)
-        => ApplicationCommands.Paste.Execute(null, textArea);
-
-    [RelayCommand]
-    private void SelectAllMouse(TextArea textArea)
-        => ApplicationCommands.SelectAll.Execute(null, textArea);
-
-    // Undo Status is not given back to disable its item in ContextFlyout; therefore it's not being used yet.
-    [RelayCommand]
-    private void UndoMouse(TextArea textArea)
-        => ApplicationCommands.Undo.Execute(null, textArea);
-
-    // Redo Status is not given back to disable its item in ContextFlyout; therefore it's not being used yet.
-    [RelayCommand]
-    private void RedoMouse(TextArea textArea)
-        => ApplicationCommands.Redo.Execute(null, textArea);
-
-    [RelayCommand]
-    private async Task OpenFile(CancellationToken token)
+    private async Task OpenFile()
     {
         var filesService = App.Current?.Services?.GetService<IFilesService>()
             ?? throw new NullReferenceException("Missing File Service instance.");
 
         var file = await filesService.OpenFileAsync();
-        if (file is null)
-        {
-            return;
-        }
+        if (file is null) return;
 
-        await ProcessFile(file, token);
-    }
-
-    private async Task ProcessFile(Avalonia.Platform.Storage.IStorageFile file, CancellationToken token)
-    {
-        Title = file.Name;
-
-        // Transform file encoding from ANSI to UTF-8  
         var tempFilePath = TransformFileEncoding(file.Path.LocalPath);
 
         try
         {
-            // Use FileStream to open the file for reading  
-            await using var readStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
-            StreamReader reader = new(readStream);
-            var content = await reader.ReadToEndAsync(token);
+            var content = await File.ReadAllTextAsync(tempFilePath, Encoding.UTF8);
             SourceDocument = new TextDocument(content);
-
-            // Build a configuration object from INI file  
-            IConfiguration config = new ConfigurationBuilder()
-                .AddIniFile(tempFilePath)
-                .Build();
+            if (_editor is null) return;
+            _editor.Document = SourceDocument;
         }
         finally
         {
-            // Delete the temp file after loading
             if (File.Exists(tempFilePath))
             {
-                try
-                {
-                    File.Delete(tempFilePath);
-                }
-                catch
-                {
-                    // Handle the exception if needed
-                    // For example, log the error or show a message to the user
-                    throw new IOException($"Failed to delete temporary file: {tempFilePath}");
-                }
+                try { File.Delete(tempFilePath); } catch { }
             }
         }
     }
-    #endregion
 
     private string TransformFileEncoding(string file)
     {
@@ -108,4 +96,17 @@ public partial class MainWindowViewModel : ViewModelBase
         File.WriteAllText(tempFilePath, fileContent, Encoding.UTF8);
         return tempFilePath;
     }
+
+    [RelayCommand]
+    private void CopyMouse(TextArea textArea) => ApplicationCommands.Copy.Execute(null, textArea);
+    [RelayCommand]
+    private void CutMouse(TextArea textArea) => ApplicationCommands.Cut.Execute(null, textArea);
+    [RelayCommand]
+    private void PasteMouse(TextArea textArea) => ApplicationCommands.Paste.Execute(null, textArea);
+    [RelayCommand]
+    private void SelectAllMouse(TextArea textArea) => ApplicationCommands.SelectAll.Execute(null, textArea);
+    [RelayCommand]
+    private void UndoMouse(TextArea textArea) => ApplicationCommands.Undo.Execute(null, textArea);
+    [RelayCommand]
+    private void RedoMouse(TextArea textArea) => ApplicationCommands.Redo.Execute(null, textArea);
 }
