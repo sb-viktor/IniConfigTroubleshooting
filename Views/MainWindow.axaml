@@ -36,7 +36,7 @@
 
             <MenuItem Header="_Edit">
 
-                <MenuItem
+                <!-- <MenuItem
                     Command="{Binding UndoMouseCommand}"
                     CommandParameter="{Binding #Editor.TextArea}"
                     Header="Undo"
@@ -74,7 +74,7 @@
                     Command="{Binding SelectAllMouseCommand}"
                     CommandParameter="{Binding #Editor.TextArea}"
                     Header="Select All"
-                    InputGesture="Ctrl+A" />
+                    InputGesture="Ctrl+A" /> -->
             </MenuItem>
         </Menu>
 
@@ -95,7 +95,7 @@
 
         <Grid RowDefinitions="*, 4, *">
 
-            <AvalonEdit:TextEditor
+            <!-- <AvalonEdit:TextEditor
                 Name="Editor"
                 Document="{Binding SourceDocument, Mode=TwoWay}"
                 FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
@@ -127,7 +127,9 @@
                             InputGesture="Ctrl+A" />
                     </MenuFlyout>
                 </AvalonEdit:TextEditor.ContextFlyout>
-            </AvalonEdit:TextEditor>
+            </AvalonEdit:TextEditor> -->
+
+            <ContentControl Content="{Binding Editor, Mode=TwoWay}" />
 
             <GridSplitter
                 Grid.Row="1"
