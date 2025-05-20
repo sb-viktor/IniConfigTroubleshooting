@@ -90,6 +90,8 @@ public partial class MainWindowViewModel : ViewModelBase
             if (Editor is not null)
                 Editor.Document = SourceDocument;
 
+            Title = file.Name; // Update the window title to the loaded file name
+
             TryBuildCondiguration(tempFilePath);
         }
         finally
@@ -113,10 +115,56 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             Debug.WriteLine($"Error loading INI file: {ex.InnerException?.Message}");
             Debug.WriteLine($"Document line count: {SourceDocument.LineCount}");
+            // Try to extract the error line number from the exception message, fallback to a default if not found
+            const int DefaultErrorLine = 1;
+            int errorLine = DefaultErrorLine;
 
+            var message = ex.InnerException?.Message ?? ex.Message;
 
-            _startLine = 157;
-            _endLine = 157;
+            // Try to extract section and key from message like "A duplicate key 'parametr3:Offset' was found."
+            var keyMatch = System.Text.RegularExpressions.Regex.Match(message, @"'([^:']+):([^']+)'\s*was found");
+            if (keyMatch.Success)
+            {
+                var section = keyMatch.Groups[1].Value;
+                var key = keyMatch.Groups[2].Value;
+                var lines = SourceDocument.Text.Split('\n');
+                int sectionLine = -1;
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i].Trim().Equals($"[{section}]", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sectionLine = i;
+                        break;
+                    }
+                }
+                if (sectionLine != -1)
+                {
+                    // Search for key after section
+                    for (int i = sectionLine + 1; i < lines.Length; i++)
+                    {
+                        var line = lines[i].TrimStart();
+                        if (line.StartsWith("[")) break; // next section
+                        if (line.StartsWith(key + "=", StringComparison.OrdinalIgnoreCase) || line.StartsWith(key + " ", StringComparison.OrdinalIgnoreCase) || line.Equals(key, StringComparison.OrdinalIgnoreCase))
+                        {
+                            errorLine = i + 1; // 1-based
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Fallback: try to extract line number as before
+                var lineMatch = System.Text.RegularExpressions.Regex.Match(message, @"Line\\s+(\\d+)");
+                if (lineMatch.Success && int.TryParse(lineMatch.Groups[1].Value, out int parsedLine))
+                {
+                    errorLine = parsedLine;
+                }
+            }
+
+            Debug.WriteLine($"Highlighting document line: {errorLine}");
+            _startLine = errorLine;
+            _endLine = errorLine;
             UpdateSquiggle(_startLine, _endLine);
         }
     }
