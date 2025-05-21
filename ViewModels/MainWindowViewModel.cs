@@ -16,7 +16,7 @@ public partial class MainWindowViewModel : ViewModelBase
 {
 
     [ObservableProperty]
-    private TextDocument _sourceDocument = new("Please, load file :)");
+    private TextDocument _sourceDocument = new();
 
     // private void UpdateSquiggle(int startLine = 0, int endLine = 0)
     // {
