@@ -3,14 +3,14 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit;
 
-namespace IniConfigTroubleshooting.Views;
+namespace IniConfigTroubleshooting.Renderers;
 
-public class RedSquiggleRenderer : IBackgroundRenderer
+public class ErrorLineRenderer : IBackgroundRenderer
 {
     private readonly TextDocument _doc;
     private int _startLine;
     private int _endLine;
-    public RedSquiggleRenderer(TextDocument doc, int startLine = 0, int endLine = 0)
+    public ErrorLineRenderer(TextDocument doc, int startLine = 0, int endLine = 0)
     {
         _doc = doc;
         SetLines(startLine, endLine);
@@ -32,11 +32,11 @@ public class RedSquiggleRenderer : IBackgroundRenderer
             var docLine = _doc.GetLineByNumber(line);
             foreach (var rect in BackgroundGeometryBuilder.GetRectsForSegment(textView, new TextSegment { StartOffset = docLine.Offset, Length = docLine.Length }))
             {
-                DrawSquigglyUnderline(drawingContext, rect, Colors.Red);
+                DrawErrorUnderline(drawingContext, rect, Colors.Red);
             }
         }
     }
-    private static void DrawSquigglyUnderline(DrawingContext dc, Avalonia.Rect rect, Color color)
+    private static void DrawErrorUnderline(DrawingContext dc, Avalonia.Rect rect, Color color)
     {
         var geo = new StreamGeometry();
         using (var ctx = geo.Open())
