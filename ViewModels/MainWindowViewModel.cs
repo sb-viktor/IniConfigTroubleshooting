@@ -4,11 +4,9 @@ using AvaloniaEdit.Editing;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IniConfigTroubleshooting.Services;
-using IniConfigTroubleshooting.Views;
+using IniConfigTroubleshooting.Renderers;
 using AvaloniaEdit.Document;
 using Microsoft.Extensions.DependencyInjection;
-using AvaloniaEdit.TextMate;
-using TextMateSharp.Grammars;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 
@@ -16,61 +14,17 @@ namespace IniConfigTroubleshooting.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private string _title = "Ini Config Troubleshooting";
 
     [ObservableProperty]
     private TextDocument _sourceDocument = new("Please, load file :)");
 
-    [ObservableProperty]
-    private TextEditor? _editor = new();
-
-    private RedSquiggleRenderer? _squiggleRenderer;
-    private RegistryOptions? _registryOptions;
-    private string? _iniScopeName;
-
-    private int _startLine = 0;
-    private int _endLine = 0;
-
-    public MainWindowViewModel()
-    {
-        Editor = new TextEditor
-        {
-            Document = SourceDocument,
-            FontFamily = new Avalonia.Media.FontFamily("Cascadia Code,Consolas,Menlo,Monospace"),
-            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
-            ShowLineNumbers = true,
-            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Visible
-        };
-        Editor.TextChanged += OnEditorTextChanged;
-        InitTextMate();
-        UpdateSquiggle(_startLine, _endLine);
-    }
-
-    private void InitTextMate()
-    {
-        _registryOptions = new RegistryOptions(ThemeName.Light);
-        _iniScopeName = _registryOptions.GetScopeByExtension(".ini");
-        if (Editor is null || _registryOptions is null || _iniScopeName is null)
-            return;
-        Editor.InstallTextMate(_registryOptions)
-              .SetGrammar(_iniScopeName);
-    }
-
-    private void OnEditorTextChanged(object? sender, EventArgs e)
-    {
-        if (Editor?.Document is not null)
-            SourceDocument = Editor.Document;
-        UpdateSquiggle(_startLine, _endLine);
-    }
-
-    private void UpdateSquiggle(int startLine = 0, int endLine = 0)
-    {
-        if (Editor is null) return;
-        _squiggleRenderer?.Detach(Editor);
-        _squiggleRenderer = new RedSquiggleRenderer(Editor.Document, startLine, endLine);
-        _squiggleRenderer.Attach(Editor);
-    }
+    // private void UpdateSquiggle(int startLine = 0, int endLine = 0)
+    // {
+    //     if (Editor is null) return;
+    //     _squiggleRenderer?.Detach(Editor);
+    //     _squiggleRenderer = new ErrorLineRenderer(Editor.Document, startLine, endLine);
+    //     _squiggleRenderer.Attach(Editor);
+    // }
 
     [RelayCommand]
     private async Task OpenFile()
@@ -87,10 +41,10 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var content = await File.ReadAllTextAsync(tempFilePath, Encoding.UTF8);
             SourceDocument = new TextDocument(content);
-            if (Editor is not null)
-                Editor.Document = SourceDocument;
+            // if (Editor is not null)
+            //     Editor.Document = SourceDocument;
 
-            Title = file.Name; // Update the window title to the loaded file name
+            // Title = file.Name; // Update the window title to the loaded file name
 
             TryBuildCondiguration(tempFilePath);
         }
@@ -152,20 +106,20 @@ public partial class MainWindowViewModel : ViewModelBase
                     }
                 }
             }
-            else
-            {
-                // Fallback: try to extract line number as before
-                var lineMatch = System.Text.RegularExpressions.Regex.Match(message, @"Line\\s+(\\d+)");
-                if (lineMatch.Success && int.TryParse(lineMatch.Groups[1].Value, out int parsedLine))
-                {
-                    errorLine = parsedLine;
-                }
-            }
+            // else
+            // {
+            //     // Fallback: try to extract line number as before
+            //     var lineMatch = System.Text.RegularExpressions.Regex.Match(message, @"Line\\s+(\\d+)");
+            //     if (lineMatch.Success && int.TryParse(lineMatch.Groups[1].Value, out int parsedLine))
+            //     {
+            //         errorLine = parsedLine;
+            //     }
+            // }
 
             Debug.WriteLine($"Highlighting document line: {errorLine}");
-            _startLine = errorLine;
-            _endLine = errorLine;
-            UpdateSquiggle(_startLine, _endLine);
+            // _startLine = errorLine;
+            // _endLine = errorLine;
+            // UpdateSquiggle(_startLine, _endLine);
         }
     }
 
